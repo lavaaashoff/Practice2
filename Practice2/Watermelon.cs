@@ -26,7 +26,7 @@ namespace Berry
         {
             if (quantity < 0)
             {
-                throw new ArgumentOutOfRangeException("Quantity cannot be negative.");
+                throw new ArgumentOutOfRangeException("Кол-во кусочков не может быть отрицательным.");
             }
             Quantity = quantity;
         }
@@ -35,29 +35,29 @@ namespace Berry
 
         public void Cut(int pieces)
         {
-            if (pieces <= 0) throw new ArgumentOutOfRangeException("Pieces cannot be negative.");
-            if (Quantity > 0) throw new InvalidOperationException("Watermelon has already been cut.");
+            if (pieces <= 0) throw new ArgumentOutOfRangeException("Кол-во кусочков для разреза должно быть положительным.");
+            if (Quantity <= 0) throw new InvalidOperationException("Арбузе уже порезан.");
             Quantity = pieces; 
-            Console.WriteLine($"The watermelon has been cut into {pieces} pieces.");
+            Console.WriteLine($"Арбуз был порезан на {pieces} кусочков.");
         }
 
         public void Eat(int pieces)
         {
-            if (pieces <= 0) throw new ArgumentOutOfRangeException("Pieces cannot be negative.");
-            if (Quantity == 0) throw new InvalidOperationException("First cut the watermelon.");
+            if (pieces <= 0) throw new ArgumentOutOfRangeException("Кол-во съеденых кусочков не может быть отрицательным.");
+            if (Quantity == 0) throw new InvalidOperationException("Сначала порежьте арбуз.");
             Quantity -= pieces;
-            Console.WriteLine($"{pieces} pieces had eaten. Now {Quantity} left");
+            Console.WriteLine($"{pieces} кусочков было съедено. Сейчас {Quantity} осталось");
         }
 
         public void Knock()
         {
-            var sound = Quantity == 0 ? "thud" : "hollow";
-            Console.WriteLine($"The watermelon makes a {sound} sound when knocked.");
+            var sound = Quantity == 0 ? "глухой" : "пустой";
+            Console.WriteLine($"Арбуз издал {sound} звук, когда вы постучали.");
         }
 
         public override string ToString()
         {
-            return $"Watermelon: {sort}, Weight: {weight}, Quantity: {Quantity}";
+            return $"Арбуз: {sort}, Вес: {weight}, Кол-во кусочков: {Quantity}";
         }
     }
 }

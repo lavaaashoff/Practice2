@@ -10,25 +10,31 @@ namespace Garden
 
     public interface IGarden
     {
-        void ShowPlants();
+        void ShowFruits();
+        void AddFruit(Fruit fruit);
     }
 
     public class Garden : IGarden
     {
         public List<Fruit> Fruits { set; get; } = new();
-        
-        public void ShowPlants()
+
+        public void ShowFruits()
         {
             if (Fruits.Count == 0)
             {
-                Console.WriteLine("The garden is empty.");
+                Console.WriteLine("Сад пуст.");
                 return;
             }
-            Console.WriteLine("Plants in the garden:");
+            Console.WriteLine("Фрукты в саду:");
             foreach (var fruit in Fruits)
             {
                 Console.WriteLine(fruit + "  * ");
             }
+        }
+
+        public void AddFruit(Fruit fruit)
+        {
+            Fruits.Add(fruit);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Form
         public Weight(decimal value)
         {
             if (value < 0)
-                throw new ArgumentOutOfRangeException("Weight cannot be negative.");
+                throw new ArgumentOutOfRangeException("Вес не может быть отрицательным.");
             this.value = value;
         }
 
@@ -43,7 +43,7 @@ namespace Form
 
         public override string ToString()
         {
-            return $"Fruit: {sort}, Weight: {weight}";
+            return $"Фрукт: {sort}, Вес: {weight}";
         }
 
     }

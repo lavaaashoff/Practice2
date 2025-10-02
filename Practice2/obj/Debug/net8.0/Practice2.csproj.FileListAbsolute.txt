@@ -12,3 +12,4 @@ C:\Users\lavaaash\source\repos\Practice2\Practice2\obj\Debug\net8.0\refint\Pract
 C:\Users\lavaaash\source\repos\Practice2\Practice2\obj\Debug\net8.0\Practice2.pdb
 C:\Users\lavaaash\source\repos\Practice2\Practice2\obj\Debug\net8.0\Practice2.genruntimeconfig.cache
 C:\Users\lavaaash\source\repos\Practice2\Practice2\obj\Debug\net8.0\ref\Practice2.dll
+C:\Users\lavaaash\source\repos\Practice2\Practice2\obj\Debug\net8.0\Practice2.sourcelink.json
