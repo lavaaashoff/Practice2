@@ -1,286 +1,119 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Berry;
 using Form;
 using Garden;
-using Berry;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using System.Linq;
 
 namespace Practice2
 {
     internal class Program
     {
-        private static List<Watermelon> _melons = new();
-
         static void Main(string[] args)
         {
-            var garden = new Garden.Garden();
+            Garden.Garden garden = new Garden.Garden();
 
-            // Стартовые примеры, чтобы не было пусто
             var watermelon1 = new Watermelon(new Weight(5.5m), WatermelonSort.CrimosnSweet, 1);
             var watermelon2 = new Watermelon(new Weight(9.6m), WatermelonSort.Sorento, 1);
+            garden.AddFruit(watermelon1);
+            garden.AddFruit(watermelon2);
 
-            TryAddToGarden(garden, watermelon1);
-            TryAddToGarden(garden, watermelon2);
-
-            _melons.Add(watermelon1);
-            _melons.Add(watermelon2);
-
-            RunMenu(garden);
-
-            // При выходе показываем, что в саду
-            Console.WriteLine("\nИтоговое состояние сада:");
-            SafeShowPlants(garden);
-            Console.WriteLine("\nПока.");
-        }
-
-        static void RunMenu(Garden.Garden garden)
-        {
-            while (true)
+            string choice;
+            do
             {
-                Console.WriteLine(@"
-================== МЕНЮ ==================
-1. Показать арбузы в моей коллекции
-2. Добавить арбуз в коллекцию и в сад
-3. Постучать по арбузу
-4. Разрезать арбуз (указать на сколько частей)
-5. Съесть часть арбуза (указать количество)
-6. Деконструировать арбуз и показать вес/сорт
-7. Показать растения в саду (garden.ShowPlants)
-0. Выход (показать сад и завершить)
-==========================================
-");
-                int choice = ReadInt("Выбор: ", min: 0, max: 7);
+                Console.WriteLine("Выберитей действие (1 - Добавить фрукт (пока только арбуз) в сад, 2 - Взаимодействие с фруктом, 0 - Выход): ");
+                choice = Console.ReadLine();
 
                 switch (choice)
                 {
-                    case 0:
-                        return;
-
-                    case 1:
-                        ListMelons();
-                        break;
-
-                    case 2:
-                        AddMelonFlow(garden);
-                        break;
-
-                    case 3:
-                        WithSelectedMelon(m =>
+                    case "1":
+                        try
                         {
-                            m.Knock();
-                            Console.WriteLine("Готово.");
-                        });
-                        break;
+                            Console.WriteLine("Введите вес арбуза: ");
+                            Weight weightInput = new Weight(Convert.ToDecimal(Console.ReadLine()));
+                            Console.WriteLine("Выберите сорт арбуза (1 - CrimosnSweet, 2 - YellowMellow, 3 - SugarBaby, 4 - CharlestonGray, 5 - Kai, 6 - Sorento): ");
+                            string input = Console.ReadLine();
 
-                    case 4:
-                        WithSelectedMelon(m =>
+                            if (!int.TryParse(input, out int number) || !Enum.IsDefined(typeof(WatermelonSort), number))
+                            {
+                                Console.WriteLine("Неверный ввод сорта арбуза.");
+                                break;
+                            }
+
+                            WatermelonSort sortInput = (WatermelonSort)number;
+                            Console.WriteLine("Введите кол-во кусочков: ");
+                            int quantityInput = Convert.ToInt32(Console.ReadLine());
+
+                            var newWatermelon = new Watermelon(weightInput, sortInput, quantityInput);
+                            garden.AddFruit(newWatermelon);
+                        }
+                        catch (Exception ex)
                         {
-                            int parts = ReadInt("Сколько частей сделать? ", min: 1);
-                            m.Cut(parts);
-                            Console.WriteLine("Разрезано.");
-                        });
+                            Console.WriteLine($"Ошибка: {ex.Message}");
+                        }
                         break;
 
-                    case 5:
-                        WithSelectedMelon(m =>
+                    case "2":
+                        try
                         {
-                            int amount = ReadInt("Сколько съесть (целое число)? ", min: 1);
-                            m.Eat(amount);
-                            Console.WriteLine("Приятного аппетита, хищник сахара.");
-                        });
-                        break;
+                            Console.WriteLine("Выберите фрукт для взаимодействия (введите индекс): ");
 
-                    case 6:
-                        WithSelectedMelon(m =>
+                            garden.ShowFruits();
+
+                            int fruitChoice = Convert.ToInt32(Console.ReadLine());
+                            if (fruitChoice < 1 || fruitChoice > garden.Fruits.Count)
+                            {
+                                Console.WriteLine("Неверный индекс фрукта.");
+                                break;
+                            }
+                            Console.WriteLine("Выберите действие (1 - Постучать, 2 - Порезать, 3 - Съесть): ");
+                            int actionChoice = Convert.ToInt32(Console.ReadLine());
+                            var selectedWatermelon = garden.Fruits[fruitChoice - 1] as Watermelon;
+                            if (selectedWatermelon != null) { 
+                                switch (actionChoice)
+                                {
+                                    case 1:
+                                        selectedWatermelon.Knock();
+                                        break;
+                                    case 2:
+                                        Console.WriteLine("Введите кол-во кусочков для разреза: ");
+                                        int cutPieces = Convert.ToInt32(Console.ReadLine());
+                                        selectedWatermelon.Cut(cutPieces);
+                                        break;
+                                    case 3:
+                                        Console.WriteLine("Введите кол-во кусочков для съедения: ");
+                                        int eatPieces = Convert.ToInt32(Console.ReadLine());
+                                        selectedWatermelon.Eat(eatPieces);
+                                        break;
+                                    default:
+                                        Console.WriteLine("Неверный выбор действия.");
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Выбранный фрукт не является арбузом.");
+
+                            }
+
+                        }
+                        catch (Exception ex)
                         {
-                            (Weight w, string sort) = m;
-                            Console.WriteLine($"Деконструкция: сорт = {sort}, вес = {w}");
-                        });
+                            Console.WriteLine($"Ошибка: {ex.Message}");
+                        }
                         break;
 
-                    case 7:
-                        SafeShowPlants(garden);
+                    default:
+                        if (choice != "0") Console.WriteLine("Неверный ввод, попробуйте снова");
                         break;
                 }
 
-                Console.WriteLine();
-            }
-        }
+            } while (choice != "0");
 
-        static void AddMelonFlow(Garden.Garden garden)
-        {
-            Console.WriteLine("Добавление арбуза:");
+            garden.ShowFruits();
 
-            decimal weight = ReadDecimal("Вес, кг (например 7.3): ", min: 0.1m);
-            var sort = ReadEnumChoice<WatermelonSort>("Выбери сорт");
-            int param = ReadInt("Третий параметр конструктора (int). Если это спелость/идентификатор — введи число: ", min: 0);
-
-            var wm = new Watermelon(new Weight(weight), sort, param);
-
-            _melons.Add(wm);
-            if (TryAddToGarden(garden, wm))
-            {
-                Console.WriteLine("Арбуз добавлен в коллекцию и в сад.");
-            }
-            else
-            {
-                Console.WriteLine("Арбуз добавлен в коллекцию. В сад не удалось добавить: не найден метод AddPlant/Add.");
-            }
-        }
-
-        static void ListMelons()
-        {
-            if (_melons.Count == 0)
-            {
-                Console.WriteLine("Коллекция пуста. Печально как холодильник студента.");
-                return;
-            }
-
-            Console.WriteLine("Твои арбузы:");
-            for (int i = 0; i < _melons.Count; i++)
-            {
-                var m = _melons[i];
-                (Weight w, string sort) = m;
-                Console.WriteLine($"{i + 1}. {sort}, вес {w}");
-            }
-        }
-
-        static void WithSelectedMelon(Action<Watermelon> action)
-        {
-            if (_melons.Count == 0)
-            {
-                Console.WriteLine("Нет арбузов. Сначала добавь хоть один.");
-                return;
-            }
-
-            ListMelons();
-            int idx = ReadInt("Выбери номер арбуза: ", min: 1, max: _melons.Count);
-            var melon = _melons[idx - 1];
-            action(melon);
-        }
-
-        static void SafeShowPlants(Garden.Garden garden)
-        {
-            try
-            {
-                garden.ShowFruits();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"garden.ShowPlants() упал: {ex.Message}");
-            }
-        }
-
-        // Пытаемся вызвать garden.AddPlant(plant) или garden.Add(plant), что найдется
-        static bool TryAddToGarden(object garden, object plant)
-        {
-            var gType = garden.GetType();
-
-            var addPlant = gType.GetMethods()
-                .FirstOrDefault(m =>
-                    m.Name == "AddPlant" &&
-                    m.GetParameters().Length == 1);
-
-            if (addPlant != null)
-            {
-                try
-                {
-                    addPlant.Invoke(garden, new[] { plant });
-                    return true;
-                }
-                catch
-                {
-                    // ignore and try Add
-                }
-            }
-
-            var add = gType.GetMethods()
-                .FirstOrDefault(m =>
-                    m.Name == "Add" &&
-                    m.GetParameters().Length == 1);
-
-            if (add != null)
-            {
-                try
-                {
-                    add.Invoke(garden, new[] { plant });
-                    return true;
-                }
-                catch
-                {
-                    // ignore
-                }
-            }
-
-            return false;
-        }
-
-        // ====== Утилиты ввода ======
-
-        static int ReadInt(string prompt, int? min = null, int? max = null)
-        {
-            while (true)
-            {
-                Console.Write(prompt);
-                var s = Console.ReadLine();
-                if (int.TryParse(s, out int v))
-                {
-                    if (min.HasValue && v < min.Value)
-                    {
-                        Console.WriteLine($"Число должно быть ≥ {min.Value}.");
-                        continue;
-                    }
-                    if (max.HasValue && v > max.Value)
-                    {
-                        Console.WriteLine($"Число должно быть ≤ {max.Value}.");
-                        continue;
-                    }
-                    return v;
-                }
-                Console.WriteLine("Это не похоже на целое число. Попробуй еще.");
-            }
-        }
-
-        static decimal ReadDecimal(string prompt, decimal? min = null, decimal? max = null)
-        {
-            while (true)
-            {
-                Console.Write(prompt);
-                var s = Console.ReadLine();
-
-                // Поддержка запятой и точки как разделителя
-                s = s?.Replace(',', '.');
-
-                if (decimal.TryParse(s, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out decimal v))
-                {
-                    if (min.HasValue && v < min.Value)
-                    {
-                        Console.WriteLine($"Число должно быть ≥ {min.Value}.");
-                        continue;
-                    }
-                    if (max.HasValue && v > max.Value)
-                    {
-                        Console.WriteLine($"Число должно быть ≤ {max.Value}.");
-                        continue;
-                    }
-                    return v;
-                }
-                Console.WriteLine("Это не похоже на число. Еще раз.");
-            }
-        }
-
-        static TEnum ReadEnumChoice<TEnum>(string title) where TEnum : struct, Enum
-        {
-            var values = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToArray();
-
-            Console.WriteLine(title + ":");
-            for (int i = 0; i < values.Length; i++)
-            {
-                Console.WriteLine($"{i + 1}. {values[i]}");
-            }
-
-            int pick = ReadInt("Номер: ", min: 1, max: values.Length);
-            return values[pick - 1];
         }
     }
 }

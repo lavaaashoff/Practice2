@@ -14,13 +14,13 @@ namespace Form
         public Weight(decimal value)
         {
             if (value < 0)
-                throw new ArgumentOutOfRangeException("Вес не может быть отрицательным.");
+                throw new ArgumentOutOfRangeException(nameof(Weight), "Вес не должен быть отрицательным.");
             this.value = value;
         }
 
         public override string ToString()
         {
-            return $"{value} kg";
+            return $"{value:f3} kg";
         }
     }
 
