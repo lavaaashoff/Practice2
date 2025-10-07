@@ -13,6 +13,7 @@ namespace Garden
     {
         void ShowFruits();
         void AddFruit(Fruit fruit);
+        void DelFruit(Fruit fruit); // добавлено удаление фрукта
         void RemoveEatenFruits();
     }
 
@@ -41,12 +42,16 @@ namespace Garden
             Fruits.Add(fruit);
         }
 
+        public void DelFruit(Fruit fruit)
+        {
+            Fruits.Remove(fruit);
+        }
         public void RemoveEatenFruits()
         {
             for (int i = Fruits.Count - 1; i >= 0; i--) // идём с конца списка
             {
                 if (Fruits[i] is Watermelon watermelon)
-                    if (watermelon.Quantity == 0 || watermelon.weight.value < 0.001m)
+                    if (watermelon.quantity == 0 || watermelon.weight.value < 0.001m)
                         Fruits.RemoveAt(i); // удаляем арбуз
             }
         }

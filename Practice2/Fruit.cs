@@ -29,6 +29,12 @@ namespace Form
         public Weight weight { get; protected set; }
         public string sort { get; protected set; }
         
+        protected Fruit()
+        {
+            this.weight = new Weight(0);
+            this.sort = "Неизвестно";
+        }
+
         protected Fruit(Weight weight, string sort)
         {
             this.weight = weight;
