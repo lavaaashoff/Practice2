@@ -21,7 +21,9 @@ namespace Berry
     public enum Colors
     {
         Red,
-        Yellow
+        Yellow,
+        Orange,
+        Pink
     }
 
 
@@ -96,15 +98,22 @@ namespace Berry
             if (a == null || b == null)
                 throw new ArgumentNullException("Оба арбуза должны существовать.");
 
-            Weight newWeight = new Weight(a.weight.value + b.weight.value);
+            var random = new Random();
+            decimal average = (a.weight.value + b.weight.value) / 2.0m;
+            decimal deviation = average * 0.15m; // 15% отклонение
+            decimal newWeightValue = average + (decimal)(random.NextDouble() * 2 - 1) * deviation;
 
-            Colors newColor = (a.color == Colors.Yellow || b.color == Colors.Yellow)
-                ? Colors.Yellow
-                : Colors.Red;
+            Weight newWeight = new Weight(newWeightValue);
 
-            var newSort = a.sort;
+            Colors newColor;
+            if (a.color == b.color || a.color < b.color) newColor = a.color;
+            else newColor = b.color;
 
-            var newQuantity = a.quantity + b.quantity;
+            var newSort = random.NextDouble() < 0.5 ? a.sort : b.sort;
+
+            int newQuantity;
+            if ((a.quantity + b.quantity) / 2 > maxPieces) newQuantity = maxPieces;
+            else newQuantity = (a.quantity + b.quantity) / 2;
 
             return new Watermelon(newWeight, Enum.Parse<WatermelonSort>(newSort), newQuantity, newColor);
         }

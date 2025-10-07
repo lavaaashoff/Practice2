@@ -23,7 +23,7 @@ namespace Practice2
             string choice;
             do
             {
-                Console.WriteLine("Выберите действие \n 1 - Добавить фрукт (пока только арбуз) в сад \n 2 - Взаимодействие с фруктом \n 3 - cмешать 2 фрукта (арбузы) \n 0 - Выход");
+                Console.WriteLine("Выберите действие \n 1 - Добавить фрукт (пока только арбуз) в сад \n 2 - Взаимодействие с фруктом \n 3 - Cмешать 2 фрукта (арбузы) \n 0 - Выход");
                 choice = Console.ReadLine(); // добавил выбор смешивания
 
                 switch (choice)
@@ -46,7 +46,7 @@ namespace Practice2
                             Console.WriteLine("\nВведите кол-во кусочков: ");
                             int quantityInput = Convert.ToInt32(Console.ReadLine());
 
-                            Console.WriteLine("\nВыберите цвет арбуза (1 - Red, 2 - Yellow): "); // добавил выбор цвета
+                            Console.WriteLine("\nВыберите цвет арбуза (1 - Red, 2 - Yellow, 3 - Orange, 4 - Pink): "); // добавил выбор цвета
                             string colorInput = Console.ReadLine();
                             if (!int.TryParse(colorInput, out int colorNumber) || !Enum.IsDefined(typeof(Colors), colorNumber - 1))
                             {
